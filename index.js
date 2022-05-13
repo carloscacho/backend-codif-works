@@ -76,4 +76,6 @@ var projeto_reg = (app.projeto = restful
 
 projeto_reg.register(app, "/projeto");
 
-app.listen(3000);
+var PORT = process.env.PORT || 8080;
+
+app.listen(PORT);
