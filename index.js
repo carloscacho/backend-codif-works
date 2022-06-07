@@ -27,7 +27,13 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 let users = [];
 
-const User = mongoose.model("User", { name: String, password: String });
+const User = mongoose.model("User", { 
+  name: String, 
+  password: String, 
+  id_area: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "area"
+  } });
 // read all users save in DataBase
 const getAllUsers = async () => {
   let allUsers = await User.find({});
@@ -69,14 +75,14 @@ app.post("/login", async (req, res) => {
   }
   const user = users.find((c) => c.name === req.body.name);
   //check to see if the user exists in the list of registered users
-  if (user == null) res.status(404).send("User does not exist!");
+  if (user == null) res.status(404).send("User não existe!");
   //if user does not exist, send a 400 response
   if (await bcrypt.compare(req.body.password, user.password)) {
     const accessToken = generateAccessToken({ user: req.body.name });
     const refreshToken = generateRefreshToken({ user: req.body.name });
-    res.json({ accessToken: accessToken, refreshToken: refreshToken });
+    res.json({ accessToken: accessToken, refreshToken: refreshToken, name: user.name, id_area: user.id_area });
   } else {
-    res.status(401).send("Password Incorrect!");
+    res.status(401).send("Senha incorreta!");
   }
 });
 
